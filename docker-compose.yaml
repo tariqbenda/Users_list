@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
+    restart: on-failure
+    volumes:
+      - ./app:/app/app
+      - ./components:/app/components
+      - ./lib:/app/lib
+      - ./ui:/app/ui
+      - ./node_modules:/app/node_modules
+      - ./public:/app/public
+      - ./package.json:/app/package.json
+      
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    restart: on-failure
