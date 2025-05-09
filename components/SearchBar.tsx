@@ -13,7 +13,7 @@ function SearchBar({ value, onChange }: Props) {
       placeholder="Search users..."
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="p-2 w-full border rounded-md"
+      className="py-2 px-4 w-full border-2 rounded-md border-white/60 text-white/80 focus:outline-none focus:ring transition duration-200 ease-in-out"
     />
   )
 }
