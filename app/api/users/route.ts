@@ -1,54 +1,49 @@
 import { NextResponse } from "next/server";
-import { faker } from '@faker-js/faker';
+import { faker } from "@faker-js/faker";
 import redis from "@/lib/redis";
 import { User } from "@/types";
 
-const cachedKey = "users";
-const TTL = 60; // 1 minute
-const API_URL = "https://jsonplaceholder.typicode.com/users";
+const CACHE_KEY = "users";
+const TTL = 60 * 5; // 5 minutes
+const USERS_COUNT = 100;
 
-
-
+/**
+ * This function generates a list of fake users using the Faker library.
+ * I used Faker because other APIs only provide a few users,
+ * and I wanted to simulate a more realistic, large dataset to test the app.
+ */
 const generateUsers = (count: number): User[] => {
-    return Array.from({ length: count }, () => ({
-      id: faker.number.int(),
-      name: faker.person.fullName(),
-      email: faker.internet.email(),
-      avatar: faker.image.avatar(),
-      city: faker.location.city(),
-      phone: faker.phone.number(),
-      company: faker.company.name(),
-    }));
-  };
+  return Array.from({ length: count }, () => ({
+    id: faker.number.int(),
+    name: faker.person.fullName(),
+    email: faker.internet.email(),
+    avatar: faker.image.avatar(),
+    city: faker.location.city(),
+    phone: faker.phone.number(),
+    company: faker.company.name(),
+  }));
+};
 
 export async function GET(req: Request) {
-    const { pathname, searchParams } = new URL(req.url);
+  const { pathname } = new URL(req.url);
 
-    const page = searchParams.get("page");
-    const limit = searchParams.get("limit");
-
-    console.log("Page:", page);
-    console.log("Limit:", limit);
-
-    // Log only requests to /api/users
-    if (pathname === "/api/users") {
-        const cachedUsers = await redis.get(cachedKey);
-        if (cachedUsers) {
-            console.log("Cache hit");
-            return NextResponse.json(JSON.parse(cachedUsers));
-        }
-        console.log("Cache miss");
-
-        const response = generateUsers(50); // Simulate fetching users from an API
-
-        const users = response;
-
-        await redis.set(cachedKey, JSON.stringify(users), "EX", TTL);
-        console.log("Cache set");
-
-        return NextResponse.json(users);
+  // Log only requests to /api/users
+  if (pathname === "/api/users") {
+    // Check Redis cache for users
+    const cachedUsers = await redis.get(CACHE_KEY);
+    if (cachedUsers) {
+      return NextResponse.json(JSON.parse(cachedUsers));
     }
 
-    // Ignore other requests
-    return NextResponse.json({ message: "Not Found" }, { status: 404 });
+    // Generate fake users if not found in cache
+    const users = generateUsers(USERS_COUNT);
+
+    // Store generated users in Redis with expiration
+    await redis.set(CACHE_KEY, JSON.stringify(users), "EX", TTL);
+
+    return NextResponse.json(users);
+  }
+
+  // Ignore other requests
+  return NextResponse.json({ message: "Not Found" }, { status: 404 });
 }

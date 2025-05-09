@@ -7,15 +7,17 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchUsers } from "@/lib/queries/users";
 import type { User } from "@/types";
 import Loading from "@/ui/Loading";
+import { useSyncIsLg } from "@/hooks/useSyncIsLg";
+import useUserStore from "@/stores/users";
 
 const MembersPage = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [page, setPage] = useState(1);
+  useSyncIsLg();
 
-  console.log("MembersPage component rendered");
+  const [searchTerm, setSearchTerm] = useState("");
+  const setSelectedUser = useUserStore((state) => state.setSelectedUser);
 
   const { data: users, isLoading } = useQuery<User[]>({
-    queryKey: ["users", page],
+    queryKey: ["users"],
     queryFn: fetchUsers,
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
@@ -33,21 +35,23 @@ const MembersPage = () => {
   }, [searchTerm, users]);
 
   return (
-    <div className="flex flex-col items-center pt-8 justify-start w-[70%] h-full transition-all duration-200 ease-in-out gap-2 px-8">
+    <div className="flex flex-col items-center pt-8 justify-start w-full lg:w-[70%] h-full transition-all duration-200 ease-in-out gap-2 px-8">
         <SearchBar value={searchTerm} onChange={setSearchTerm} />
           <div className="flex items-center justify-between w-full p-2">
             <h1 className="text-2xl text-white/80 font-semibold">Members</h1>
             <p className="text-sm text-white/60">{filteredUsers.length} members</p>
           </div>
         {isLoading && (
-          <div className="w-full h-full flex items-center justify-center">
+          <div className="w-full h-full flex items-center justify-center p-4">
             <Loading />
           </div>
         )}
 
         <ul className="size-full flex flex-wrap gap-4 p-2 items-start justify-center overflow-y-auto scroll-pt-2 scroll-smooth snap-y snap-mandatory scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
             {filteredUsers.map((user) => (
-                <UserCard key={user.id} username={user.name} city={user.city} company={user.company} avatar={user.avatar}/>
+                <div onClick={() => {setSelectedUser(user)}} key={user.id}>
+                  <UserCard key={user.id} User={user}/>
+                </div>
             ))}
         </ul>
         {filteredUsers.length === 0 && (

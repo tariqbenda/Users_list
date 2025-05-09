@@ -9,7 +9,6 @@ export function getQueryClient() {
     // and assign it to the variable
 
   if (!queryClient) {
-    console.log("Creating a new QueryClient instance");
     queryClient = new QueryClient({
         defaultOptions: {
             queries: {

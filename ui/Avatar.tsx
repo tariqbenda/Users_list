@@ -1,15 +1,19 @@
 import React from "react";
+import default_avatar from "../public/avatar_picture.svg";
+import Image from "next/image";
 
 interface AvatarProps {
-  avatar: string; // Expect a string for the avatar URL
+  avatar?: string | undefined;
 }
 
-const Avatar = ({ avatar }: AvatarProps) => {
+const Avatar = ({ avatar=undefined }: AvatarProps) => {
   return (
     <img
-      src={avatar}
-      alt="User Avatar"
-      className="w-16 h-16 rounded-full object-cover"
+      src={ avatar || default_avatar.src}
+      alt="Avatar"
+      width={60}
+      height={60}
+      className={`rounded-full mask-contain`}
     />
   );
 };
