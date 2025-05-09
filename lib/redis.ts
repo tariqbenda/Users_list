@@ -1,5 +1,10 @@
 import Redis from 'ioredis';
 
-const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
+const redisUrl = process.env.REDIS_URL;
 
+if (!redisUrl) {
+    throw new Error("REDIS_URL environment variable is not set");
+}
+
+const redis = new Redis(redisUrl);
 export default redis;
