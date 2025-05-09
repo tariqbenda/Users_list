@@ -63,3 +63,6 @@ hooks/              # Custom React hooks
 lib/                # Utilities (Redis client, queries)
 public/             # Static assets (avatars, etc.)
 stores/             # Zustand stores for state management
+
+
+You Will also Find LightHouse_screenShots/ folder with the Lighthouse report screenshots.
