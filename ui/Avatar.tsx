@@ -8,7 +8,7 @@ interface AvatarProps {
 
 const Avatar = ({ avatar=undefined }: AvatarProps) => {
   return (
-    <img
+    <Image
       src={ avatar || default_avatar.src}
       alt="Avatar"
       width={60}

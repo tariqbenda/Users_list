@@ -6,10 +6,15 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: "**",
+        hostname: 'cdn.jsdelivr.net',
+        pathname: '/gh/faker-js/assets-person-portrait/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'avatars.githubusercontent.com',
+        pathname: '/u/**',
+      }
     ],
   },
 };
-
 export default nextConfig;
