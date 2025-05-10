@@ -7,9 +7,13 @@
 
 export const fetchUsers = async () => {
 
+  try {
     const res = await fetch(`/api/users`);
-
     if (!res.ok) throw new Error("Failed to fetch users");
-
     return res.json();
-  };
+  }
+  catch (error) {
+    console.log("Error fetching users:", error);
+  }
+  return [];
+};

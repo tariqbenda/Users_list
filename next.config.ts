@@ -1,10 +1,15 @@
-import type { NextConfig } from "next";
-
-// https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/84.jpg
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
   reactStrictMode: false,
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: "**",
+      },
+    ],
+  },
 };
 
 export default nextConfig;
